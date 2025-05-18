@@ -2,6 +2,9 @@
 
 Add hooks to your Git repository using a TOML file.
 
+> [!IMPORTANT]
+> If you like this project, consider starring! ⭐ It's free, and it always motivates me to make more of such projects. :D
+
 ## Table of Contents
 
 - [Usage](#usage)
