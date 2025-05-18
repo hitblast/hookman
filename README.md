@@ -23,7 +23,7 @@ run = "<command>"  # and here is your actual shell command
 
 # example:
 [hook.pre-commit]
-run = "mise run manpage"
+run = "pip install -U -r requirements.txt && pip list > requirements.txt"
 ```
 
 1. To put your hooks into action, run:
@@ -38,7 +38,13 @@ hookman build
 hookman list
 ```
 
-3. And, to remove/clean all hooks:
+3. To list all possible events a hook can be attached to, run:
+
+```bash
+hookman list-events
+```
+
+4. And, to remove/clean all hooks:
 
 ```bash
 hookman clean
