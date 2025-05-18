@@ -2,6 +2,13 @@
 
 Add hooks to your Git repository using a TOML file.
 
+## Table of Contents
+
+- [Usage](#usage)
+- [Installation](#installation)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Usage
 
 Using hookman is pretty straightforward.
@@ -19,19 +26,19 @@ run = "<command>"  # and here is your actual shell command
 run = "mise run manpage"
 ```
 
-Once your commands are in place, run:
+1. To put your hooks into action, run:
 
 ```bash
 hookman build
 ```
 
-To list all installed hooks, run:
+2. To list all installed hooks, run:
 
 ```bash
 hookman list
 ```
 
-And, to remove/clean all hooks:
+3. And, to remove/clean all hooks:
 
 ```bash
 hookman clean
@@ -45,6 +52,10 @@ Install using `cargo`:
 cargo install hookman
 ```
 
+## Contributing
+
+hookman is a very tiny project for those who'd like to use an extremely minimal setup for managing git hooks, so I don't think there is a need to follow a mandatory set of rules for contribution. Anyhow, pull requests, and new issues regarding feature suggestions, bug fixes or new ideas are always welcome!
+
 ## License
 
-Licensed under the MIT License. Please check [LICENSE] for more information.
+Licensed under the MIT License. Please check [LICENSE](./LICENSE) for more information.

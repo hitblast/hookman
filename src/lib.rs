@@ -26,4 +26,6 @@ pub enum Command {
     List,
     /// Delete all hooks defined in the config
     Clean,
+    /// List all possible events for running hooks
+    ListEvents,
 }

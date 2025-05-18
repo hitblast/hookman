@@ -21,19 +21,75 @@ struct Hook {
     run: String,
 }
 
+/// A list of supported hook events/types.
+const VALID_HOOKS: &[&str] = &[
+    "applypatch-msg",
+    "pre-applypatch",
+    "post-applypatch",
+    "pre-commit",
+    "pre-merge-commit",
+    "prepare-commit-msg",
+    "commit-msg",
+    "post-commit",
+    "pre-rebase",
+    "post-checkout",
+    "post-merge",
+    "pre-push",
+    "pre-receive",
+    "update",
+    "post-receive",
+    "post-update",
+    "push-to-checkout",
+    "pre-auto-gc",
+    "post-rewrite",
+    "sendemail-validate",
+    "fsmonitor-watchman",
+    "proc-receive",
+];
+
 fn main() -> Result<()> {
     let opt = Opt::parse();
+
+    // If the config file doesn't exist, display a clear error and exit.
+    if !opt.config.exists() {
+        bail!("Config file not found: {}", opt.config.display());
+    }
 
     match opt.command {
         Command::Build => build_hooks(&opt.config)?,
         Command::List => list_hooks(&opt.config)?,
+        Command::ListEvents => list_events(),
         Command::Clean => clean_hooks(&opt.config)?,
     }
 
     Ok(())
 }
 
-/// Remove hook scripts defined in the config
+/*
+
+Helper functions
+
+*/
+
+/// Climb up until we hit a `.git` directory
+fn find_git_root() -> Option<PathBuf> {
+    let mut dir = std::env::current_dir().ok()?;
+    loop {
+        if dir.join(".git").is_dir() {
+            return Some(dir);
+        }
+        if !dir.pop() {
+            return None;
+        }
+    }
+}
+
+/*
+
+Command-specific functions
+
+*/
+
 fn clean_hooks(config_path: &PathBuf) -> Result<()> {
     // parse toml
     let toml_str = fs::read_to_string(config_path)
@@ -67,32 +123,6 @@ fn build_hooks(config_path: &PathBuf) -> Result<()> {
     let git_root = find_git_root().context("not inside a Git repository")?;
     let hooks_dir = git_root.join(".git").join("hooks");
     fs::create_dir_all(&hooks_dir).context("creating .git/hooks directory")?;
-
-    // validate supported hook types (map keys)
-    const VALID_HOOKS: &[&str] = &[
-        "applypatch-msg",
-        "pre-applypatch",
-        "post-applypatch",
-        "pre-commit",
-        "pre-merge-commit",
-        "prepare-commit-msg",
-        "commit-msg",
-        "post-commit",
-        "pre-rebase",
-        "post-checkout",
-        "post-merge",
-        "pre-push",
-        "pre-receive",
-        "update",
-        "post-receive",
-        "post-update",
-        "push-to-checkout",
-        "pre-auto-gc",
-        "post-rewrite",
-        "sendemail-validate",
-        "fsmonitor-watchman",
-        "proc-receive",
-    ];
 
     for (hook_name, hook) in cfg.hook {
         if !VALID_HOOKS.contains(&hook_name.as_str()) {
@@ -147,15 +177,8 @@ fn list_hooks(config_path: &PathBuf) -> Result<()> {
     Ok(())
 }
 
-/// Climb up until we hit a `.git` directory
-fn find_git_root() -> Option<PathBuf> {
-    let mut dir = std::env::current_dir().ok()?;
-    loop {
-        if dir.join(".git").is_dir() {
-            return Some(dir);
-        }
-        if !dir.pop() {
-            return None;
-        }
+fn list_events() {
+    for entry in VALID_HOOKS {
+        println!("{}", entry);
     }
 }
