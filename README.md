@@ -61,6 +61,13 @@ Install using `cargo`:
 cargo install hookman
 ```
 
+Or, you can set it up globally using `mise`:
+
+```bash
+# Note: This will compile the binary for your system.
+mise use -g cargo:hookman
+```
+
 ## Contributing
 
 hookman is a very tiny project for those who'd like to use an extremely minimal setup for managing git hooks, so I don't think there is a need to follow a mandatory set of rules for contribution. Anyhow, pull requests, and new issues regarding feature suggestions, bug fixes or new ideas are always welcome!
