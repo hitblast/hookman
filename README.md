@@ -1,10 +1,10 @@
-## hooker
+## hookman
 
 Add hooks to your Git repository using a TOML file.
 
 ## Usage
 
-Using hooker is pretty straightforward.
+Using hookman is pretty straightforward.
 
 When inside the directory of a Git repository,
 create a new `hookman.toml` with the following structure:
@@ -22,7 +22,19 @@ run = "mise run manpage"
 Once your commands are in place, run:
 
 ```bash
-hooker build
+hookman build
+```
+
+To list all installed hooks, run:
+
+```bash
+hookman list
+```
+
+And, to remove/clean all hooks:
+
+```bash
+hookman clean
 ```
 
 ## Installation
@@ -30,7 +42,7 @@ hooker build
 Install using `cargo`:
 
 ```bash
-cargo install hooker
+cargo install hookman
 ```
 
 ## License
