@@ -1,0 +1,2 @@
+[hook.pre-commit]
+run = "cargo xtask manpage"

@@ -1,0 +1,37 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH hookman 1  "hookman 0.1.0" 
+.SH NAME
+hookman \- Install or list git hooks from a TOML config
+.SH SYNOPSIS
+\fBhookman\fR [\fB\-c\fR|\fB\-\-config\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] <\fIsubcommands\fR>
+.SH DESCRIPTION
+Install or list git hooks from a TOML config
+.SH OPTIONS
+.TP
+\fB\-c\fR, \fB\-\-config\fR=\fICONFIG\fR [default: hookman.toml]
+Path to the config file
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH SUBCOMMANDS
+.TP
+hookman\-build(1)
+Generate all hooks into .git/hooks
+.TP
+hookman\-list(1)
+List all hooks defined in the config
+.TP
+hookman\-clean(1)
+Delete all hooks defined in the config
+.TP
+hookman\-list\-events(1)
+List all possible events for running hooks
+.TP
+hookman\-help(1)
+Print this message or the help of the given subcommand(s)
+.SH VERSION
+v0.1.0
