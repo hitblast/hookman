@@ -5,15 +5,7 @@ edition = "2024"
 description = "Add hooks to your Git repository using a TOML file."
 readme = "README.md"
 license = "MIT"
-keywords = [
-    "git",
-    "version-control",
-    "vcs",
-    "git-hooks",
-    "hooks",
-    "pre-commit",
-    "hookman",
-]
+keywords = ["git", "git-vcs", "git-hooks", "pre-commit", "hookman"]
 categories = ["command-line-utilities"]
 
 [dependencies]
