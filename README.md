@@ -1,4 +1,4 @@
-## hookman
+# hookman
 
 Add hooks to your Git repository using a TOML file.
 
