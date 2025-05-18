@@ -2,8 +2,9 @@
 use std::os::unix::fs::PermissionsExt;
 use std::{collections::HashMap, fs, io::Write, path::PathBuf};
 
-use anyhow::{bail, Context, Result};
-use clap::{Parser, Subcommand};
+use anyhow::{Context, Result, bail};
+use clap::Parser;
+use hookman::{Command, Opt};
 use serde::Deserialize;
 
 /// Read a hookman.toml of the form:
@@ -18,32 +19,6 @@ struct Config {
 #[derive(Deserialize)]
 struct Hook {
     run: String,
-}
-
-/// CLI options
-#[derive(Parser)]
-#[command(
-    author,
-    version,
-    about = "Install or list git hooks from a TOML config"
-)]
-struct Opt {
-    /// Path to the config file
-    #[arg(short, long, default_value = "hookman.toml")]
-    config: PathBuf,
-
-    #[command(subcommand)]
-    command: Command,
-}
-
-#[derive(Subcommand)]
-enum Command {
-    /// Generate all hooks into .git/hooks
-    Build,
-    /// List all hooks defined in the config
-    List,
-    /// Delete all hooks defined in the config
-    Clean,
 }
 
 fn main() -> Result<()> {
