@@ -68,6 +68,13 @@ Or, you can set it up globally using `mise`:
 mise use -g cargo:hookman
 ```
 
+For macOS, you can install using [Homebrew](https://brew.sh/):
+```bash
+brew install hitblast/tap/hookman
+```
+
+If your platform isn't enlisted here, you can opt for the [compressed binary downloads](https://github.com/hitblast/hookman/releases) in the GitHub Releases section of the repository.
+
 ## Contributing
 
 hookman is a very tiny project for those who'd like to use an extremely minimal setup for managing git hooks, so I don't think there is a need to follow a mandatory set of rules for contribution. Anyhow, pull requests, and new issues regarding feature suggestions, bug fixes or new ideas are always welcome!
