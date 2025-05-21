@@ -53,7 +53,7 @@ fn main() -> Result<()> {
 
     // If the config file doesn't exist, display a clear error and exit.
     if !opt.config.exists() {
-        bail!("Config file not found: {}", opt.config.display());
+        bail!("config file not found: {}", opt.config.display());
     }
 
     match opt.command {
@@ -106,9 +106,9 @@ fn clean_hooks(config_path: &PathBuf) -> Result<()> {
         if hook_path.exists() {
             fs::remove_file(&hook_path)
                 .with_context(|| format!("removing hook file `{}`", hook_name))?;
-            println!("Removed hook `{}`", hook_name);
+            println!("removed hook `{}`", hook_name);
         } else {
-            println!("No hook `{}` to remove, skipping", hook_name);
+            println!("no hook `{}` to remove, skipping", hook_name);
         }
     }
     Ok(())
@@ -121,7 +121,7 @@ fn build_hooks(config_path: &PathBuf) -> Result<()> {
     let cfg: Config = toml::from_str(&toml_str).context("parsing hookman.toml")?;
 
     // find git root
-    let git_root = find_git_root().context("not inside a Git repository")?;
+    let git_root = find_git_root().context("not inside a git repository")?;
     let hooks_dir = git_root.join(".git").join("hooks");
     fs::create_dir_all(&hooks_dir).context("creating .git/hooks directory")?;
 
@@ -136,7 +136,7 @@ fn build_hooks(config_path: &PathBuf) -> Result<()> {
                 "hook {}: either `run` or `script` can be assigned at a time.",
                 hook_name
             )
-        } else if !(use_run && use_script) {
+        } else if !(use_run || use_script) {
             bail!(
                 "hook {}: you must use either `run` or `script` in the definition.",
                 hook_name
