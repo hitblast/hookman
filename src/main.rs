@@ -158,7 +158,7 @@ fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
             let default_env = String::from("/usr/bin/env bash");
 
             let shell = if use_current_shell {
-                env::var("SHELL").unwrap_or_else(|_| default_env)
+                env::var("SHELL").unwrap_or(default_env)
             } else {
                 default_env
             };
