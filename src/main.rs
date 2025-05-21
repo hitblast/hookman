@@ -57,7 +57,7 @@ fn main() -> Result<()> {
     }
 
     match opt.command {
-        Command::Build => build_hooks(&opt.config)?,
+        Command::Build { use_current_shell } => build_hooks(use_current_shell, &opt.config)?,
         Command::List => list_hooks(&opt.config)?,
         Command::ListEvents => list_events(),
         Command::Clean => clean_hooks(&opt.config)?,
@@ -114,7 +114,7 @@ fn clean_hooks(config_path: &PathBuf) -> Result<()> {
     Ok(())
 }
 
-fn build_hooks(config_path: &PathBuf) -> Result<()> {
+fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
     // parse toml
     let toml_str = fs::read_to_string(config_path)
         .with_context(|| format!("reading config `{}`", config_path.display()))?;
@@ -155,7 +155,13 @@ fn build_hooks(config_path: &PathBuf) -> Result<()> {
         // if the `run` tag is used, copy its contents over to a new script
         if use_run {
             // determine the default shell
-            let shell = env::var("SHELL").unwrap_or_else(|_| String::from("/usr/bin/env bash"));
+            let default_env = String::from("/usr/bin/env bash");
+
+            let shell = if use_current_shell {
+                env::var("SHELL").unwrap_or_else(|_| default_env)
+            } else {
+                default_env
+            };
 
             // shebang + set -e + the user’s command
             writeln!(file, "#!{}", shell)?;

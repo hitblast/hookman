@@ -21,7 +21,12 @@ pub struct Opt {
 #[derive(Subcommand)]
 pub enum Command {
     /// Generate all hooks into .git/hooks
-    Build,
+    Build {
+        /// Use the shell from the current session for the hooks.
+        /// If not set, this will default to /usr/bin/env bash
+        #[arg(short, long)]
+        use_current_shell: bool,
+    },
     /// List all hooks defined in the config
     List,
     /// Delete all hooks defined in the config
