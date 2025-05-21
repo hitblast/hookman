@@ -22,11 +22,15 @@ create a new `hookman.toml` with the following structure:
 ```toml
 # structure:
 [hook.<event>]  # here "event" is the event for running the hook
-run = "<command>"  # and here is your actual shell command
+run = "<command>"  # you can either have a `run` field with the command itself
+script = "<script path>"  # or, your personal script inside the directory
 
 # example:
 [hook.pre-commit]
 run = "pip install -U -r requirements.txt && pip list > requirements.txt"
+
+[hook.pre-push]
+script = "scripts/bundle-app.sh"
 ```
 
 1. To put your hooks into action, run:
@@ -34,6 +38,8 @@ run = "pip install -U -r requirements.txt && pip list > requirements.txt"
 ```bash
 hookman build
 ```
+
+With this command, `hookman` handles all script permissions, relocation and other mundane tasks without you ever having to touch it.
 
 2. To list all installed hooks, run:
 
