@@ -18,7 +18,8 @@ struct Config {
 
 #[derive(Deserialize)]
 struct Hook {
-    run: String,
+    run: Option<String>,
+    script: Option<String>,
 }
 
 /// A list of supported hook events/types.
@@ -125,24 +126,51 @@ fn build_hooks(config_path: &PathBuf) -> Result<()> {
     fs::create_dir_all(&hooks_dir).context("creating .git/hooks directory")?;
 
     for (hook_name, hook) in cfg.hook {
-        if !VALID_HOOKS.contains(&hook_name.as_str()) {
-            bail!("unsupported hook type `{}`", hook_name);
-        }
-        let dest = hooks_dir.join(&hook_name);
+        let use_run = hook.run.is_some();
+        let use_script = hook.script.is_some();
 
+        if !VALID_HOOKS.contains(&hook_name.as_str()) {
+            bail!("unsupported hook type `{}`", hook_name)
+        } else if use_run && use_script {
+            bail!(
+                "hook {}: either `run` or `script` can be assigned at a time.",
+                hook_name
+            )
+        } else if !(use_run && use_script) {
+            bail!(
+                "hook {}: you must use either `run` or `script` in the definition.",
+                hook_name
+            )
+        }
+
+        // set destination file
+        let dest = hooks_dir.join(&hook_name);
         if dest.exists() {
-            println!("Overwriting hook `{}`", hook_name);
+            println!("overwriting hook `{}`", hook_name);
         }
 
         let mut file = fs::File::create(&dest)
             .with_context(|| format!("creating hook file `{}`", dest.display()))?;
 
-        // shebang + set -e + the user’s command
-        writeln!(file, "#!/usr/bin/env bash")?;
-        writeln!(file, "set -e")?;
-        writeln!(file, "{}", hook.run)?;
+        // if the `run` tag is used, copy its contents over to a new script
+        // if the `script` tag is used, copy the contents of the script itself
+        if use_run {
+            // shebang + set -e + the user’s command
+            writeln!(file, "#!/usr/bin/env bash")?;
+            writeln!(file, "set -e")?;
+            writeln!(file, "{}", hook.run.unwrap())?;
+        } else if use_script {
+            let path = hook.script.unwrap();
 
-        // make the hook executable on Unix; on Windows skip
+            if !fs::exists(&path).unwrap() {
+                bail!("hook {}: script path doesn't exist", hook_name)
+            }
+
+            let data = fs::read_to_string(path).unwrap();
+            write!(file, "{}", data)?;
+        }
+
+        // make the hook executable on Unix; on Windows, skip this step
         #[cfg(unix)]
         {
             let mut perms = file.metadata()?.permissions();
@@ -150,7 +178,7 @@ fn build_hooks(config_path: &PathBuf) -> Result<()> {
             fs::set_permissions(&dest, perms)?;
         }
 
-        println!("Installed hook `{}`", hook_name);
+        println!("installed hook `{}`", hook_name);
     }
 
     Ok(())
