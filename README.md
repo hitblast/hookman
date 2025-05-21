@@ -27,12 +27,13 @@ The usage is pretty straightforward.
 When inside the directory of a Git repository, create a new `hookman.toml` file with the following structure:
 
 ```toml
-# structure:
 [hook.<event>]  # the hook type/event (pre-commit, update etc.)
 run = "<command>"  # you can either have a `run` field with the command itself
 script = "<script path>"  # or, your personal script inside the directory
+```
 
-# example:
+For example:
+```toml
 [hook.pre-commit]
 run = "pip install -U -r requirements.txt && pip list > requirements.txt"
 
