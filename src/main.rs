@@ -1,6 +1,6 @@
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
-use std::{collections::HashMap, fs, io::Write, path::PathBuf};
+use std::{collections::HashMap, env, fs, io::Write, path::PathBuf};
 
 use anyhow::{Context, Result, bail};
 use clap::Parser;
@@ -153,13 +153,17 @@ fn build_hooks(config_path: &PathBuf) -> Result<()> {
             .with_context(|| format!("creating hook file `{}`", dest.display()))?;
 
         // if the `run` tag is used, copy its contents over to a new script
-        // if the `script` tag is used, copy the contents of the script itself
         if use_run {
+            // determine the default shell
+            let shell = env::var("SHELL").unwrap_or_else(|_| String::from("/usr/bin/env bash"));
+
             // shebang + set -e + the user’s command
-            writeln!(file, "#!/usr/bin/env bash")?;
+            writeln!(file, "#!{}", shell)?;
             writeln!(file, "set -e")?;
             writeln!(file, "{}", hook.run.unwrap())?;
-        } else if use_script {
+        }
+        // if the `script` tag is used, copy the contents of the script itself
+        else if use_script {
             let path = hook.script.unwrap();
 
             if !fs::exists(&path).unwrap() {
@@ -191,11 +195,11 @@ fn list_hooks(config_path: &PathBuf) -> Result<()> {
     let cfg: Config = toml::from_str(&toml_str).context("parsing hookman.toml")?;
 
     if cfg.hook.is_empty() {
-        println!("No hooks defined in {}", config_path.display());
+        println!("no hooks defined in {}", config_path.display());
         return Ok(());
     }
 
-    println!("Hooks defined in {}:", config_path.display());
+    println!("hooks defined in {}:", config_path.display());
     let mut hooks: Vec<_> = cfg.hook.keys().collect();
     hooks.sort();
     for hook in hooks {

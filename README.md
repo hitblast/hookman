@@ -7,21 +7,28 @@ Add hooks to your Git repository using a TOML file.
 
 ## Table of Contents
 
+- [Key Features](#key-features)
 - [Usage](#usage)
 - [Installation](#installation)
 - [Contributing](#contributing)
 - [License](#license)
 
+## Key Features
+
+- Automates the creation of multiple git hooks with just one TOML file.
+- No symlinks, no additional `chmod +x` commands or perm-handling is needed. `hookman` does it all for you.
+- Hooks event validation so that you don't accidentally write a wrong hook type.
+- Tiny & fast; Made using Rust.
+
 ## Usage
 
-Using hookman is pretty straightforward.
+The usage is pretty straightforward.
 
-When inside the directory of a Git repository,
-create a new `hookman.toml` with the following structure:
+When inside the directory of a Git repository, create a new `hookman.toml` file with the following structure:
 
 ```toml
 # structure:
-[hook.<event>]  # here "event" is the event for running the hook
+[hook.<event>]  # the hook type/event (pre-commit, update etc.)
 run = "<command>"  # you can either have a `run` field with the command itself
 script = "<script path>"  # or, your personal script inside the directory
 
