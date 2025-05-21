@@ -41,6 +41,8 @@ run = "pip install -U -r requirements.txt && pip list > requirements.txt"
 script = "scripts/bundle-app.sh"
 ```
 
+---
+
 1. To put your hooks into action, run:
 
 ```bash
