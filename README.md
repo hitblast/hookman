@@ -73,7 +73,15 @@ For macOS, you can install using [Homebrew](https://brew.sh/):
 brew install hitblast/tap/hookman
 ```
 
+### Manual Installation
+
 If your platform isn't enlisted here, you can opt for the [compressed binary downloads](https://github.com/hitblast/hookman/releases) in the GitHub Releases section of the repository.
+
+Note than on devices running macOS, you'll have to remove the quarantine attribute from the binary:
+
+```bash
+xattr -d com.apple.quarantine bin/hookman  # inside extracted zip
+```
 
 ## Contributing
 
