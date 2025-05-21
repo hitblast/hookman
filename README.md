@@ -47,6 +47,9 @@ script = "scripts/bundle-app.sh"
 
 ```bash
 hookman build
+
+# or use this command to use the current shell for hook execution later on
+hookman build --use-current-shell
 ```
 
 With this command, `hookman` handles all script permissions, relocation and other mundane tasks without you ever having to touch it.
