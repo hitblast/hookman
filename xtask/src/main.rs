@@ -13,7 +13,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Generate manpage for cutler
+    /// Generate manpage for hookman
     Manpage {
         /// Output directory for the manpage
         #[arg(short, long, default_value = "man/man1")]
