@@ -12,7 +12,7 @@ categories = ["command-line-utilities"]
 clap = { version = "4.5", features = ["derive"] }
 anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.5"
+toml = "0.8"
 
 [workspace]
 members = [".", "xtask"]
