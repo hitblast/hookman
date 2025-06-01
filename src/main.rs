@@ -55,12 +55,11 @@ fn main() -> Result<()> {
     if !opt.config.exists() {
         bail!("config file not found: {}", opt.config.display());
     }
-    
+
     if !opt.ignore_stale {
         let config_content = fs::read_to_string(&opt.config)
             .with_context(|| format!("reading config `{}`", opt.config.display()))?;
-        let cfg: Config = toml::from_str(&config_content)
-            .context("parsing hookman.toml")?;
+        let cfg: Config = toml::from_str(&config_content).context("parsing hookman.toml")?;
         warn_stale_hooks(&cfg);
     }
 
