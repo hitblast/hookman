@@ -55,6 +55,14 @@ fn main() -> Result<()> {
     if !opt.config.exists() {
         bail!("config file not found: {}", opt.config.display());
     }
+    
+    if !opt.ignore_stale {
+        let config_content = fs::read_to_string(&opt.config)
+            .with_context(|| format!("reading config `{}`", opt.config.display()))?;
+        let cfg: Config = toml::from_str(&config_content)
+            .context("parsing hookman.toml")?;
+        warn_stale_hooks(&cfg);
+    }
 
     match opt.command {
         Command::Build { use_current_shell } => build_hooks(use_current_shell, &opt.config)?,
@@ -212,11 +220,45 @@ fn list_hooks(config_path: &PathBuf) -> Result<()> {
         println!("- {}", hook);
     }
 
+    if let Some(git_root) = find_git_root() {
+        let hooks_dir = git_root.join(".git").join("hooks");
+        if let Ok(entries) = fs::read_dir(&hooks_dir) {
+            for entry in entries.flatten() {
+                if let Ok(file_name) = entry.file_name().into_string() {
+                    if !file_name.ends_with(".sample")
+                        && VALID_HOOKS.contains(&file_name.as_str())
+                        && !cfg.hook.contains_key(&file_name)
+                    {
+                        println!("warning: stale hook: {}", file_name);
+                    }
+                }
+            }
+        }
+    }
     Ok(())
 }
 
 fn list_events() {
     for entry in VALID_HOOKS {
         println!("{}", entry);
+    }
+}
+
+fn warn_stale_hooks(cfg: &Config) {
+    if let Some(git_root) = find_git_root() {
+        let hooks_dir = git_root.join(".git").join("hooks");
+        if let Ok(entries) = fs::read_dir(&hooks_dir) {
+            let tracked: Vec<&str> = cfg.hook.keys().map(|s| s.as_str()).collect();
+            for entry in entries.flatten() {
+                if let Ok(file_name) = entry.file_name().into_string() {
+                    if !file_name.ends_with(".sample")
+                        && VALID_HOOKS.contains(&file_name.as_str())
+                        && !tracked.contains(&file_name.as_str())
+                    {
+                        println!("Warning: stale hook: {}", file_name);
+                    }
+                }
+            }
+        }
     }
 }
