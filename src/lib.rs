@@ -14,7 +14,7 @@ pub struct Opt {
     pub config: PathBuf,
 
     /// Ignore stale hooks inside .git/hooks (removes warning message)
-    #[arg(short = 'i', long = "ignore-stale")]
+    #[arg(short, long)]
     pub ignore_stale: bool,
 
     #[command(subcommand)]
