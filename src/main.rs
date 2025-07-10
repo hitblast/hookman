@@ -113,10 +113,10 @@ fn clean_hooks(config_path: &PathBuf) -> Result<()> {
         let hook_path = hooks_dir.join(hook_name);
         if hook_path.exists() {
             fs::remove_file(&hook_path)
-                .with_context(|| format!("removing hook file `{}`", hook_name))?;
-            println!("removed hook `{}`", hook_name);
+                .with_context(|| format!("removing hook file `{hook_name}`"))?;
+            println!("removed hook `{hook_name}`");
         } else {
-            println!("no hook `{}` to remove, skipping", hook_name);
+            println!("no hook `{hook_name}` to remove, skipping");
         }
     }
 
@@ -155,7 +155,7 @@ fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
         // set destination file
         let dest = hooks_dir.join(&hook_name);
         if dest.exists() {
-            println!("overwriting hook `{}`", hook_name);
+            println!("overwriting hook `{hook_name}`");
         }
 
         let mut file = fs::File::create(&dest)
@@ -177,7 +177,7 @@ fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
             };
 
             // write the shebang, error settings, and the user's multi-line command
-            writeln!(file, "#!{}", shell)?;
+            writeln!(file, "#!{shell}")?;
             #[cfg(not(windows))]
             {
                 writeln!(file, "set -e")?;
@@ -201,7 +201,7 @@ fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
             }
             let data = fs::read_to_string(&script_path)
                 .with_context(|| format!("reading script {}", script_path.display()))?;
-            write!(file, "{}", data)?;
+            write!(file, "{data}")?;
         }
 
         // on Unix, make sure the hook is marked as executable
@@ -212,7 +212,7 @@ fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
             fs::set_permissions(&dest, perms)?;
         }
 
-        println!("installed hook `{}`", hook_name);
+        println!("installed hook `{hook_name}`");
     }
 
     Ok(())
@@ -233,7 +233,7 @@ fn list_hooks(config_path: &PathBuf) -> Result<()> {
     let mut hooks: Vec<_> = cfg.hook.keys().collect();
     hooks.sort();
     for hook in hooks {
-        println!("- {}", hook);
+        println!("- {hook}");
     }
 
     Ok(())
@@ -241,7 +241,7 @@ fn list_hooks(config_path: &PathBuf) -> Result<()> {
 
 fn list_events() {
     for entry in VALID_HOOKS {
-        println!("{}", entry);
+        println!("{entry}");
     }
 }
 
@@ -256,7 +256,7 @@ fn warn_stale_hooks(cfg: &Config) {
                         && VALID_HOOKS.contains(&file_name.as_str())
                         && !tracked.contains(&file_name.as_str())
                     {
-                        println!("\x1b[33m[warning]\x1b[0m: stale hook: {}", file_name);
+                        println!("\x1b[33m[warning]\x1b[0m: stale hook: {file_name}");
                     }
                 }
             }
