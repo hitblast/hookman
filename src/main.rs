@@ -51,7 +51,7 @@ const VALID_HOOKS: &[&str] = &[
 fn main() -> Result<()> {
     let opt = Opt::parse();
 
-    // If the config file doesn't exist, display a clear error and exit.
+    // if the config file doesn't exist, display a clear error and exit
     if !opt.config.exists() {
         bail!("config file not found: {}", opt.config.display());
     }
@@ -75,7 +75,7 @@ fn main() -> Result<()> {
 
 /*
 
-Helper functions
+helper functions
 
 */
 
@@ -94,7 +94,7 @@ fn find_git_root() -> Option<PathBuf> {
 
 /*
 
-Command-specific functions
+command-specific functions
 
 */
 
@@ -108,6 +108,7 @@ fn clean_hooks(config_path: &PathBuf) -> Result<()> {
     let git_root = find_git_root().context("not inside a Git repository")?;
     let hooks_dir = git_root.join(".git").join("hooks");
 
+    // only remove hooks that are defined in the configuration
     for hook_name in cfg.hook.keys() {
         let hook_path = hooks_dir.join(hook_name);
         if hook_path.exists() {
@@ -118,6 +119,7 @@ fn clean_hooks(config_path: &PathBuf) -> Result<()> {
             println!("no hook `{}` to remove, skipping", hook_name);
         }
     }
+
     Ok(())
 }
 
@@ -159,35 +161,50 @@ fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
         let mut file = fs::File::create(&dest)
             .with_context(|| format!("creating hook file `{}`", dest.display()))?;
 
-        // if the `run` tag is used, copy its contents over to a new script
         if use_run {
-            // determine the default shell
-            let default_env = String::from("/usr/bin/env bash");
+            // platform-aware default shell
+            #[cfg(not(windows))]
+            let default_shell = "/usr/bin/env bash";
+            #[cfg(windows)]
+            let default_shell = "cmd.exe";
 
+            // use current shell only if available and valid; otherwise, fallback
             let shell = if use_current_shell {
-                env::var("SHELL").unwrap_or(default_env)
+                // on Windows, SHELL may not be set or may not be usable
+                env::var("SHELL").unwrap_or_else(|_| default_shell.to_string())
             } else {
-                default_env
+                default_shell.to_string()
             };
 
-            // shebang + set -e + the user’s command
+            // write the shebang, error settings, and the user's multi-line command
             writeln!(file, "#!{}", shell)?;
-            writeln!(file, "set -e")?;
-            writeln!(file, "{}", hook.run.unwrap())?;
-        }
-        // if the `script` tag is used, copy the contents of the script itself
-        else if use_script {
-            let path = hook.script.unwrap();
-
-            if !fs::exists(&path).unwrap() {
-                bail!("hook {}: script path doesn't exist", hook_name)
+            #[cfg(not(windows))]
+            {
+                writeln!(file, "set -e")?;
             }
-
-            let data = fs::read_to_string(path).unwrap();
+            writeln!(file, "{}", hook.run.unwrap())?;
+        } else if use_script {
+            // resolve the script path; if it is relative, treat it relative to the config file
+            let path = hook.script.unwrap();
+            let mut script_path = PathBuf::from(&path);
+            if script_path.is_relative() {
+                if let Some(config_parent) = config_path.parent() {
+                    script_path = config_parent.join(script_path);
+                }
+            }
+            if !script_path.exists() {
+                bail!(
+                    "hook {}: script path '{}' does not exist",
+                    hook_name,
+                    script_path.display()
+                )
+            }
+            let data = fs::read_to_string(&script_path)
+                .with_context(|| format!("reading script {}", script_path.display()))?;
             write!(file, "{}", data)?;
         }
 
-        // make the hook executable on Unix; on Windows, skip this step
+        // on Unix, make sure the hook is marked as executable
         #[cfg(unix)]
         {
             let mut perms = file.metadata()?.permissions();
