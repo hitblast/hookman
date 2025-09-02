@@ -17,7 +17,7 @@ jobs:
       FILE_NAME: hookman-${{ github.event.release.name }}-darwin-arm64.zip
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -70,7 +70,7 @@ jobs:
       FILE_NAME: hookman-${{ github.event.release.name }}-darwin-x86_64.zip
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -123,7 +123,7 @@ jobs:
       FILE_NAME: hookman-${{ github.event.release.name }}-linux-x86_64.zip
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -176,7 +176,7 @@ jobs:
       FILE_NAME: hookman-${{ github.event.release.name }}-windows-x86_64.zip
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -233,7 +233,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Prepare Crates.io README
         run: sed -i '/^>/d' README.md
       - name: Publish to crates.io
