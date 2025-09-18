@@ -194,9 +194,10 @@ fn build_hooks(use_current_shell: bool, config_path: &PathBuf) -> Result<()> {
             let path = hook.script.unwrap();
             let mut script_path = PathBuf::from(&path);
             if script_path.is_relative()
-                && let Some(config_parent) = config_path.parent() {
-                    script_path = config_parent.join(script_path);
-                }
+                && let Some(config_parent) = config_path.parent()
+            {
+                script_path = config_parent.join(script_path);
+            }
             if !script_path.exists() {
                 bail!(
                     "hook {}: script path '{}' does not exist",
@@ -258,11 +259,11 @@ fn warn_stale_hooks(cfg: &Config) {
             for entry in entries.flatten() {
                 if let Ok(file_name) = entry.file_name().into_string()
                     && !file_name.ends_with(".sample")
-                        && VALID_HOOKS.contains(&file_name.as_str())
-                        && !tracked.contains(&file_name.as_str())
-                    {
-                        println!("\x1b[33m[warning]\x1b[0m: stale hook: {file_name}");
-                    }
+                    && VALID_HOOKS.contains(&file_name.as_str())
+                    && !tracked.contains(&file_name.as_str())
+                {
+                    println!("\x1b[33m[warning]\x1b[0m: stale hook: {file_name}");
+                }
             }
         }
     }
