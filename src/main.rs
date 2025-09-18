@@ -67,7 +67,7 @@ fn main() -> Result<()> {
         Command::Build { use_current_shell } => build_hooks(use_current_shell, &opt.config)?,
         Command::List => list_hooks(&opt.config)?,
         Command::ListEvents => list_events(),
-        Command::Clean => clean_hooks(&opt.config)?,
+        Command::Clean { all } => clean_hooks(&opt.config, all)?,
     }
 
     Ok(())
@@ -98,7 +98,7 @@ command-specific functions
 
 */
 
-fn clean_hooks(config_path: &PathBuf) -> Result<()> {
+fn clean_hooks(config_path: &PathBuf, all: bool) -> Result<()> {
     // parse toml
     let toml_str = fs::read_to_string(config_path)
         .with_context(|| format!("reading config `{}`", config_path.display()))?;
@@ -107,6 +107,12 @@ fn clean_hooks(config_path: &PathBuf) -> Result<()> {
     // find git root
     let git_root = find_git_root().context("not inside a Git repository")?;
     let hooks_dir = git_root.join(".git").join("hooks");
+
+    // if --all is passed, clear all
+    if all {
+        fs::remove_dir_all(&hooks_dir)?;
+        return Ok(());
+    }
 
     // only remove hooks that are defined in the configuration
     for hook_name in cfg.hook.keys() {

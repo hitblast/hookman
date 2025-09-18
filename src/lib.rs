@@ -34,7 +34,11 @@ pub enum Command {
     /// List all hooks defined in the config
     List,
     /// Delete all hooks defined in the config
-    Clean,
+    Clean {
+        /// Delete all hooks.
+        #[arg(short, long)]
+        all: bool,
+    },
     /// List all possible events for running hooks
     ListEvents,
 }
