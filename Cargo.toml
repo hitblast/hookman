@@ -1,11 +1,12 @@
 [package]
 name = "hookman"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2024"
 description = "Add hooks to your Git repository using a TOML file."
+authors = ["Anindya Shiddhartha <hitblastlive@gmail.com>"]
 readme = "README.md"
 license = "MIT"
-keywords = ["git", "git-vcs", "git-hooks", "pre-commit", "hookman"]
+keywords = ["git", "git-vcs", "git-hooks", "pre-commit", "hookman", "automation"]
 categories = ["command-line-utilities"]
 
 [dependencies]
