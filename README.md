@@ -70,6 +70,9 @@ hookman list-events
 
 ```bash
 hookman clean
+
+# use --all/a to delete the directory + stale hooks
+hookman clean --all
 ```
 
 ## Installation
