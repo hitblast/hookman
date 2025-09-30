@@ -27,7 +27,7 @@ pub enum Command {
     /// Generate all hooks into .git/hooks
     Build {
         /// Use the shell from the current session for the hooks.
-        /// If not set, this will default to /usr/bin/env bash
+        /// If not set, this will default to /usr/bin/env bash (cmd.exe for Windows).
         #[arg(short, long)]
         use_current_shell: bool,
     },
