@@ -1,5 +1,8 @@
 # hookman
 
+[![Rust Tests](https://github.com/hitblast/hookman/actions/workflows/tests.yml/badge.svg)](https://github.com/hitblast/hookman/actions/workflows/tests.yml)
+[![Release Builds](https://github.com/hitblast/hookman/actions/workflows/release.yml/badge.svg)](https://github.com/hitblast/hookman/actions/workflows/release.yml)
+
 Add hooks to your Git repository using a TOML file.
 
 > [!IMPORTANT]
